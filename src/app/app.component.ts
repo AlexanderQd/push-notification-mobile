@@ -3,6 +3,9 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Push, PushObject, PushOptions } from '@ionic-native/push/ngx';
+
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +28,9 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private _notification: NotificationService,
+    private _push: Push
   ) {
     this.initializeApp();
   }
@@ -34,6 +39,22 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this._notification.init();
+      this.testPush();
     });
+  }
+
+  private testPush() {
+    this._push.hasPermission()
+      .then(
+        res => {
+          if (res.isEnabled) {
+            console.log('i have permissions')
+          } else {
+            console.log('not have permissions');
+          }
+        }
+      )
+
   }
 }
